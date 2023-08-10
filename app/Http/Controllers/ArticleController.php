@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\EditArticleRequest;
 use App\Models\Article;
 
 class ArticleController extends Controller
@@ -38,5 +39,31 @@ class ArticleController extends Controller
     {
         $article = Article::findOrFail($id);
         return view('article.show', compact('article'));
+    }
+
+    public function edit($id)
+    {
+        $article = Article::findOrFail($id);
+        return view('article.edit', compact('article'));
+    }
+
+    public function update(EditArticleRequest $request, $id)
+    {
+        $article = Article::findOrFail($id);
+        $data = $request->validated();
+        $article->fill($data);
+        $article->save();
+        return redirect()->route('articles.index')
+            ->with('success', 'Edit was successful!');
+    }
+
+    public function destroy($id)
+    {
+        $article = Article::find($id);
+        if ($article) {
+            $article->delete();
+        }
+        return redirect()->route('articles.index')
+            ->with('success', 'Delete was successful!');;
     }
 }
